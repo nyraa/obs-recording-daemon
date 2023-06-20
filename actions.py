@@ -11,12 +11,12 @@ scene = None
 
 
 def init():
-    logger.info('init obs socket')
+    logger.info('Init obs socket')
     obs_config = configparser.ConfigParser()
     obs_config.read('obs_config.ini')
     host = obs_config['DEFAULT']['host']
     port = obs_config['DEFAULT']['port']
-    logger.info(f'connecting to obs websocket {host}:{port}')
+    logger.info(f'Connecting to obs websocket {host}:{port}')
     password = obs_config['DEFAULT']['password']
     global scene
     scene = obs_config['DEFAULT']['scene']
@@ -35,13 +35,15 @@ def start_recording(entry):
     if client is None:
         init()
     print('start recording', entry)
-    logger.info('start recording')
+    logger.info('Start recording')
     client.call(requests.StartRecord())
 
 def stop_recording(entry):
     if client is None:
         init()
     print('stop recording', entry)
-    logger.info('stop recording')
+    logger.info('Stop recording')
     res = client.call(requests.StopRecord())
     file_path = res.datain['outputPath']
+
+    logger.info(f'Save the recording file to path: {file_path}')
