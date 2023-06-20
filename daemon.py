@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 logger.info('=== Round started ===')
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('config.ini', encoding='utf-8')
 
 state = config['DEFAULT']['state']
 running = config['DEFAULT']['running']
@@ -64,7 +64,7 @@ for entry in entry_to_remove:
     config.remove_section(entry)
 
 logger.info('Saving config...')
-with open('config.ini', 'w') as configfile:
+with open('config.ini', 'w', encoding='utf-8') as configfile:
     config.write(configfile)
 
 logger.info('=== Round finished ===')

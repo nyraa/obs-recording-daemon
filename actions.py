@@ -13,7 +13,7 @@ scene = None
 def init():
     logger.info('Init obs socket')
     obs_config = configparser.ConfigParser()
-    obs_config.read('obs_config.ini')
+    obs_config.read('obs_config.ini', encoding='utf-8')
     host = obs_config['DEFAULT']['host']
     port = obs_config['DEFAULT']['port']
     logger.info(f'Connecting to obs websocket {host}:{port}')
