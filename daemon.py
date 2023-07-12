@@ -15,26 +15,30 @@ logger.info('=== Round started ===')
 config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')
 
+schedule_config = configparser.ConfigParser()
+schedule_config.read('schedule.ini', encoding='utf-8')
+
 # global settings
-state = config['CFG_config']['state']
-running = config['CFG_config']['running']
-remove_expired = config['CFG_config'].getboolean('remove_expired')
+state = config['DEFAULT']['state']
+running = config['DEFAULT']['running']
+remove_expired = config['DEFAULT'].getboolean('remove_expired')
 
 # mark the expired entry to remove
 entry_to_remove = []
 
 
-for entry in config:
+for entry in schedule_config:
     # skip not meeting section
-    if entry == 'DEFAULT' or entry.startswith('CFG_'):
+    if entry == 'DEFAULT':
         continue
     try:
+        section = schedule_config[entry]
         logger.info(f'Checking entry [{entry}]')
-        start = config[entry]['start']
+        start = section['start']
         start_date = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
-        end = config[entry]['end']
+        end = section['end']
         end_date = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
-        keep = config.getboolean(entry, 'keep')
+        keep = schedule_config.getboolean(entry, 'keep')
 
         # check start < end
         if start_date > end_date:
@@ -42,21 +46,22 @@ for entry in config:
             print('start date is after end date', entry)
             continue
 
-        # if end is in the past, and running is current entry, then we need to stop the daemon
+        # if end is in the past, and running is current entry, stop the section
         if end_date < datetime.datetime.now() and running == entry:
             logger.info(f'Stop task [{entry}]')
             print('stop task', entry)
-            actions.stop_recording(config[entry])
-            config.set('CFG_config', 'running', '')
-            config.set('CFG_config', 'state', 'idle')
-        # if start date is in the past, then we need to start the daemon
+            # actions.stop_recording(section)
+            config.set('DEFAULT', 'running', '')
+            config.set('DEFAULT', 'state', 'idle')
+        # if start date is in the past, and end date is in the future(now in the section)
         elif start_date < datetime.datetime.now() and end_date > datetime.datetime.now():
+            # if state is idle, start the section
             if state == 'idle':
                 logger.info(f'Start task [{entry}]')
                 print('start task', entry)
-                actions.start_recording(config[entry])
-                config.set('CFG_config', 'running', entry)
-                config.set('CFG_config', 'state', 'running')
+                # actions.start_recording(section)
+                config.set('DEFAULT', 'running', entry)
+                config.set('DEFAULT', 'state', 'running')
                 continue
             elif not running == entry:
                 print(f'Time overlap [{entry}]')
@@ -74,10 +79,14 @@ for entry in config:
 logger.info('Removing expired entries...')
 for entry in entry_to_remove:
     logger.info(f'Removing entry [{entry}]')
-    config.remove_section(entry)
+    schedule_config.remove_section(entry)
 
 logger.info('Saving config...')
 with open('config.ini', 'w', encoding='utf-8') as configfile:
     config.write(configfile)
+
+logger.info('Saving schedule...')
+with open('schedule.ini', 'w', encoding='utf-8') as configfile:
+    schedule_config.write(configfile)
 
 logger.info('=== Round finished ===')
