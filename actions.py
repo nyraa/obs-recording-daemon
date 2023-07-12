@@ -55,21 +55,38 @@ def destroy():
 def start_recording(entry):
     init_obs()
 
-    logger.info('Launching zoom')
-    try:
-        room_id = entry['room']
-        password = entry['password']
-        name = entry['name']
-        
-        logger.info(f'Room id: {room_id}, Password: {password}, Name: {name}')
-        zoom.join_meeting(room_id, password, name)
+    if entry['type'] == 'webex':
+        logger.info('Launching webex')
+        try:
+            room_id = entry['room']
+            name = entry['name']
+            email = entry['email']
 
-    except Exception as e:
-        logger.error(e)
-        print(e)
-        return False
-    logger.info('Zoom started')
+            logger.info(f'Room id: {room_id}, Name: {name}, Email: {email}')
+            webex.join_meeting_uia(room_id, name, email)
+        except Exception as e:
+            logger.error(e)
+            print(e)
+            return False
+        logger.info('Webex started')
 
+    elif entry['type'] == 'zoom':
+        logger.info('Launching zoom')
+        try:
+            room_id = entry['room']
+            password = entry['password']
+            name = entry['name']
+            
+            logger.info(f'Room id: {room_id}, Password: {password}, Name: {name}')
+            zoom.join_meeting(room_id, password, name)
+
+        except Exception as e:
+            logger.error(e)
+            print(e)
+            return False
+        logger.info('Zoom started')
+
+    # switch scene
 
 
     print('start recording', entry)
@@ -97,8 +114,12 @@ def stop_recording(entry):
     except:
         logger.warning('OBS call StopRecord failed')
     
-    # terminate Zoom
-    zoom.terminate_meeting()
+    if entry['type'] == 'webex':
+        # terminate webex
+        webex.terminate_meeting_uia()
+    elif entry['type'] == 'zoom':
+        # terminate Zoom
+        zoom.terminate_meeting()
 
     # save OBS output
     if len(res.datain) == 0:

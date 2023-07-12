@@ -93,7 +93,7 @@ def join_meeting_uia(room_id, name, email):
     ctypes.windll.user32.ShowWindow(window, 3)
     print('open fin')
 
-def left_meeting_uia():
+def terminate_meeting_uia():
     meeting_window_pid = application.process_from_module(module='atmgr.exe')
     webex_meeting_window = Application(backend='uia').connect(process=meeting_window_pid, timeout=20)
 
@@ -108,4 +108,4 @@ if __name__ == '__main__':
     join_meeting_uia('2644 679 5227', 'bar', 'example@example.com')
     time.sleep(5)
     print('close')
-    left_meeting_uia()
+    terminate_meeting_uia()
