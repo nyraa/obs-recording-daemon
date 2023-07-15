@@ -127,5 +127,9 @@ def stop_recording(entry):
         return False
     else:
         file_path = res.datain['outputPath']
+        filename = os.path.basename(file_path)
+        new_filename = entry['filename'].format(filename)
+        new_file_path = os.path.join(os.path.dirname(file_path), new_filename)
+        os.rename(file_path, new_file_path)
         logger.info(f'Save the recording file to path: {file_path}')
         return True
