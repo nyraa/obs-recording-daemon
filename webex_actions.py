@@ -54,6 +54,12 @@ def join_meeting_uia(room_id, name, email):
     wakeup_webex()
     webex = Application(backend='uia').connect(title='Webex', timeout=100)
 
+    try:
+        back_btn = webex.Webex.child_window(title=" 返回", auto_id="MainWindowClass.OnboardingView.onboardingScreen.backButton", control_type="Button").wrapper_object()
+        back_btn.click_input()
+    except:
+        pass
+
     join_btn = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingStartWidget.dataStackedWidget.dataWidget.joinMeetingButton", control_type="Button").wrapper_object()
     join_btn.click_input()
     time.sleep(1)
