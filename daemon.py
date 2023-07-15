@@ -50,16 +50,17 @@ for entry in schedule_config:
         if end_date < datetime.datetime.now() and running == entry:
             logger.info(f'Stop task [{entry}]')
             print('stop task', entry)
-            # actions.stop_recording(section)
+            actions.stop_recording(section)
             config.set('DEFAULT', 'running', '')
             config.set('DEFAULT', 'state', 'idle')
+        
         # if start date is in the past, and end date is in the future(now in the section)
         elif start_date < datetime.datetime.now() and end_date > datetime.datetime.now():
             # if state is idle, start the section
             if state == 'idle':
                 logger.info(f'Start task [{entry}]')
                 print('start task', entry)
-                # actions.start_recording(section)
+                actions.start_recording(section, config)
                 config.set('DEFAULT', 'running', entry)
                 config.set('DEFAULT', 'state', 'running')
                 continue

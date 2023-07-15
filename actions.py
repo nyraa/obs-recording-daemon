@@ -15,7 +15,6 @@ logging.basicConfig(filename='daemon.log', level=logging.INFO, format='%(asctime
 logger = logging.getLogger(__name__)
 
 client = None
-scene = None
 
 def init():
     logger.info('Init obs socket')
@@ -25,8 +24,6 @@ def init():
     port = obs_config['DEFAULT']['port']
     logger.info(f'Connecting to obs websocket {host}:{port}')
     password = obs_config['DEFAULT']['password']
-    global scene
-    scene = obs_config['DEFAULT']['scene']
 
     global client
     client = obsws(host, port, password)
@@ -52,7 +49,7 @@ def destroy():
         return
     client.disconnect()
 
-def start_recording(entry):
+def start_recording(entry, config):
     init_obs()
 
     if entry['type'] == 'webex':
@@ -87,7 +84,13 @@ def start_recording(entry):
         logger.info('Zoom started')
 
     # switch scene
-
+    scene_name = entry.get('scene', config['SCENES'][entry['type']])
+    try:
+        client.call(requests.SetCurrentProgramScene(sceneName=scene_name))
+    except Exception as e:
+        logger.error(e)
+        print(f'Can not switch to scene {scene_name}')
+        return False
 
     print('start recording', entry)
     logger.info('Start recording')
@@ -109,10 +112,13 @@ def stop_recording(entry):
     
     print('stop recording', entry)
     logger.info('Stop recording')
+    obs_fail_flag = False
     try:
         res = client.call(requests.StopRecord())
-    except:
-        logger.warning('OBS call StopRecord failed')
+    except Exception as e:
+        logger.error('OBS call StopRecord failed')
+        logger.error(e)
+        obs_fail_flag = True
     
     if entry['type'] == 'webex':
         # terminate webex
@@ -122,7 +128,7 @@ def stop_recording(entry):
         zoom.terminate_meeting()
 
     # save OBS output
-    if len(res.datain) == 0:
+    if not obs_fail_flag and len(res.datain) == 0:
         logger.warning('No outputPath in the response, recording maybe failed')
         return False
     else:
@@ -133,3 +139,6 @@ def stop_recording(entry):
         os.rename(file_path, new_file_path)
         logger.info(f'Save the recording file to path: {file_path}')
         return True
+
+if __name__ == "__main__":
+    init()
