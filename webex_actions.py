@@ -10,21 +10,9 @@ import ctypes
 
 import utils
 
-def wakeup_webex():
-    send_keys('{LWIN}')
-    time.sleep(0.3)
-
-    pyperclip.copy('webex')
-    time.sleep(0.3)
-
-    send_keys('^v')
-    time.sleep(2)
-
-    send_keys('{ENTER}')
-    time.sleep(5)
 
 def join_meeting(room_id, name, email):
-    wakeup_webex()
+    utils.call_from_search('webex')
 
     img_join = cv2.imread('img/webex_join.png')
     x, y = pyautogui.locateCenterOnScreen(img_join, confidence=0.9)
@@ -51,7 +39,7 @@ def join_meeting(room_id, name, email):
     time.sleep(2)
 
 def join_meeting_uia(room_id, name, email):
-    wakeup_webex()
+    utils.call_from_search('webex')
     webex = Application(backend='uia').connect(title='Webex', timeout=100)
 
     try:
@@ -60,21 +48,34 @@ def join_meeting_uia(room_id, name, email):
     except:
         pass
 
-    join_btn = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingStartWidget.dataStackedWidget.dataWidget.joinMeetingButton", control_type="Button").wrapper_object()
+    # click join
+    try:
+        join_btn = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingStartWidget.dataStackedWidget.dataWidget.joinMeetingButton", control_type="Button").wrapper_object()
+        mode = 'NOLOGIN'
+    except:
+        try:
+            join_btn = webex.Webex.child_window(auto_id="MainWindow.ConversationsForm.topLevelStack.mainAreasWidget.rightSideStack.UnifiedMeetingViewWidget.mainStackedWidget.calendarMainWidget.meetingsHeadWidget.expandedLine.joinMeetingLayoutWidget.joinMeetingButton", control_type="Button").wrapper_object()
+            mode = 'LOGIN'
+        except:
+            print('join button not found')
+            pass
     join_btn.click_input()
     time.sleep(1)
 
-    room_id_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.meetingInfo.textInput", control_type="Edit").wrapper_object()
-    room_id_textbox.set_text(room_id)
+    if mode == 'NOLOGIN':
+        room_id_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.meetingInfo.textInput", control_type="Edit").wrapper_object()
+        room_id_textbox.set_text(room_id)
 
-    name_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.displayName.textInput", control_type="Edit").wrapper_object()
-    name_textbox.set_text(name)
+        name_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.displayName.textInput", control_type="Edit").wrapper_object()
+        name_textbox.set_text(name)
 
-    email_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.email.textInput", control_type="Edit").wrapper_object()
-    email_textbox.set_text(email)
+        email_textbox = webex.Webex.child_window(auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.email.textInput", control_type="Edit").wrapper_object()
+        email_textbox.set_text(email)
 
-    next_button = webex.Webex.child_window(title=" 下一步", auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.nextButton", control_type="Button").wrapper_object()
-    next_button.click_input()
+        next_button = webex.Webex.child_window(title=" 下一步", auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.nextButton", control_type="Button").wrapper_object()
+        next_button.click_input()
+    else:
+        pass
     
     time.sleep(1)
 
@@ -114,4 +115,4 @@ if __name__ == '__main__':
     join_meeting_uia('2644 679 5227', 'bar', 'example@example.com')
     time.sleep(5)
     print('close')
-    terminate_meeting_uia()
+    # terminate_meeting_uia()
