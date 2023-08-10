@@ -75,7 +75,8 @@ def join_meeting_uia(room_id, name, email):
         next_button = webex.Webex.child_window(title=" 下一步", auto_id="MainWindowClass.OnboardingView.onboardingScreen.stackedWidget.normalViewsPage.onboardingStackWidget.OnboardingGuestJoinWidget.nextButton", control_type="Button").wrapper_object()
         next_button.click_input()
     else:
-        pass
+        pyperclip.copy(room_id)
+        send_keys('^v{ENTER}')
     
     time.sleep(1)
 
@@ -83,6 +84,10 @@ def join_meeting_uia(room_id, name, email):
     webex_meeting_window = Application(backend='uia').connect(process=meeting_window_pid, timeout=20)
 
     time.sleep(3)
+
+    # close mic warning and prompt
+    send_keys('{ESC}{ESC}')
+    time.sleep(1)
     # webex_meeting_window.Pane.print_control_identifiers()
     try:
         join_meeting_button = webex_meeting_window.Pane.Button7.wrapper_object()
