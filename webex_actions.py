@@ -80,15 +80,17 @@ def join_meeting_uia(room_id, name, email):
     
     time.sleep(1)
 
+
+    """ update cause error,  original atmgr.exe is the main window of meeting, now main windows can't found
+    # prepare window
     meeting_window_pid = application.process_from_module(module='atmgr.exe')
     webex_meeting_window = Application(backend='uia').connect(process=meeting_window_pid, timeout=20)
-
     time.sleep(3)
 
-    # close mic warning and prompt
-    send_keys('{ESC}{ESC}')
-    time.sleep(1)
+
+
     # webex_meeting_window.Pane.print_control_identifiers()
+    # waiting for prepare window constructs
     try:
         join_meeting_button = webex_meeting_window.Pane.Button7.wrapper_object()
         # join_meeting_button = webex_meeting_window.Pane.child_window(title="加入會議").wrapper_object()
@@ -96,13 +98,25 @@ def join_meeting_uia(room_id, name, email):
     except Exception as e:
         print(e)
         pass
+    """
 
+    
+    # close mic warning and prompt
+    send_keys('{ESC}{ESC}')
+    time.sleep(1)
+
+    # press enter to join
+    send_keys('{ENTER}')
+
+    # waiting for joining
     time.sleep(3)
     
+    """ agmtr.exe missing
     # maximize
     window = findwindows.find_windows(process=meeting_window_pid)[0]
     webex_meeting_window.window_(handle=window).set_focus()
     ctypes.windll.user32.ShowWindow(window, 3)
+    """
     print('open fin')
 
 def terminate_meeting_uia():
@@ -117,7 +131,7 @@ def terminate_meeting_uia():
     # webex_meeting_window.Pane.type_keys('{LWIN down}{DOWN}{LWIN up}')
 
 if __name__ == '__main__':
-    join_meeting_uia('2644 679 5227', 'bar', 'example@example.com')
+    join_meeting_uia('2644 400 7600', 'bar', 'example@example.com')
     time.sleep(5)
     print('close')
     # terminate_meeting_uia()
