@@ -8,6 +8,9 @@ logging.basicConfig(filename='daemon.log', level=logging.INFO, format='%(asctime
 logger = logging.getLogger(__name__)
 
 
+def hold_meeting():
+    pass
+
 def join_meeting(room_id, password, name):
     utils.launch_cmd(rf'%appdata%\Zoom\bin\Zoom.exe "--url=zoommtg://zoom.us/join?action=join&confno={room_id}&pwd={password}&uname={urllib.parse.quote_plus(name)}"')
 

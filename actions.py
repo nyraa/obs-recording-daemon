@@ -103,6 +103,9 @@ def start_recording(entry, config):
         return False
     return True
 
+def maintain(section):
+    pass
+
 def stop_recording(entry):
     if client is None:
         try:

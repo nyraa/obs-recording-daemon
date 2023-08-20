@@ -68,6 +68,9 @@ for entry in schedule_config:
                 print(f'Time overlap [{entry}]')
                 logger.warning(f'Time overlap appears in section recording section [{running}] and idle seciton [{entry}]')
                 continue
+            elif running == entry:
+                # session running, maintain
+                actions.maintain(section)
         else:
             logger.info(f'No action to [{entry}]')
         if remove_expired and end_date < datetime.datetime.now() and not keep:
