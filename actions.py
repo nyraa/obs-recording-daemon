@@ -126,7 +126,7 @@ def stop_recording(entry):
     
     if entry['type'] == 'webex':
         # terminate webex
-        webex.terminate_meeting_uia()
+        webex.terminate_meeting()
     elif entry['type'] == 'zoom':
         # terminate Zoom
         zoom.terminate_meeting()

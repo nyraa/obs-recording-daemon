@@ -7,6 +7,7 @@ import pyperclip
 import time
 import cv2
 import ctypes
+import os
 
 import utils
 
@@ -78,7 +79,7 @@ def join_meeting_uia(room_id, name, email):
         pyperclip.copy(room_id)
         send_keys('^v{ENTER}')
     
-    time.sleep(1)
+    time.sleep(10)
 
 
     """ update cause error,  original atmgr.exe is the main window of meeting, now main windows can't found
@@ -117,7 +118,19 @@ def join_meeting_uia(room_id, name, email):
     webex_meeting_window.window_(handle=window).set_focus()
     ctypes.windll.user32.ShowWindow(window, 3)
     """
+
+    # maximize
+    send_keys('{LWIN down}{UP}{LWIN up}')
     print('open fin')
+
+def terminate_meeting():
+    terminate_meeting_taskkill()
+
+def terminate_meeting_keyboard():
+    pass
+
+def terminate_meeting_taskkill():
+    os.system('taskkill /F /IM CiscoCollabHost.exe')
 
 def terminate_meeting_uia():
     meeting_window_pid = application.process_from_module(module='atmgr.exe')
