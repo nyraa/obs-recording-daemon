@@ -79,6 +79,7 @@ def start_recording(entry, config):
             zoom.join_meeting(room_id, password, name)
 
         except Exception as e:
+            logger.log('Zoom is failed to start')
             logger.error(e)
             print(e)
             return False
@@ -89,6 +90,7 @@ def start_recording(entry, config):
     try:
         client.call(requests.SetCurrentProgramScene(sceneName=scene_name))
     except Exception as e:
+        logger.error(f'Can not switch to scene {scene_name}')
         logger.error(e)
         print(f'Can not switch to scene {scene_name}')
         return False
@@ -98,6 +100,7 @@ def start_recording(entry, config):
     try:
         client.call(requests.StartRecord())
     except Exception as e:
+        logger.error('Can not start recording')
         logger.error(e)
         print(e)
         return False
