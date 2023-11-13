@@ -8,7 +8,8 @@ logging.basicConfig(filename='daemon.log', level=logging.INFO, format='%(asctime
 logger = logging.getLogger(__name__)
 
 
-def hold_meeting():
+def hold_meeting(section):
+    utils.maximize_windows_with_title_substring('Zoom')
     pass
 
 def join_meeting(room_id, password, name):

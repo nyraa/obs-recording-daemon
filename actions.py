@@ -104,6 +104,8 @@ def start_recording(entry, config):
     return True
 
 def maintain(section):
+    if section['type'] == 'zoom':
+        zoom.hold_meeting(section)
     pass
 
 def stop_recording(entry):
