@@ -15,8 +15,11 @@ def hold_meeting(section):
 def join_meeting(room_id, password, name):
     utils.launch_cmd(rf'%appdata%\Zoom\bin\Zoom.exe "--url=zoommtg://zoom.us/join?action=join&confno={room_id}&pwd={password}&uname={urllib.parse.quote_plus(name)}"')
 
-    zoom = Application(backend='uia').connect(title='Zoom', timeout=60)
-    zoom.Zoom.type_keys('{ESC}')
+    try:
+        zoom = Application(backend='uia').connect(title='Zoom', timeout=10)
+        zoom.Zoom.type_keys('{ESC}')
+    except:
+        logger.error('Can not find zoom window after launching')
 
 def terminate_meeting():
     try:
