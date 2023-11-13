@@ -23,10 +23,10 @@ def join_meeting(room_id, password, name):
 
 def terminate_meeting():
     try:
-        zoom = Application(backend='uia').connect(title='Zoom', timeout=100)
+        zoom = Application(backend='uia').connect(title='Zoom', timeout=5)
         zoom.Zoom.type_keys('%{F4}')
 
-        quit_dialog = Application(backend='uia').connect(title='結束會議或離開會議？', timeout=20)
+        quit_dialog = Application(backend='uia').connect(title='結束會議或離開會議？', timeout=5)
         quit_btn = quit_dialog.結束會議或離開會議.child_window(title="離開會議", control_type="Button").wrapper_object()
         quit_btn.click_input()
     except Exception as e:
