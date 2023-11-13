@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def hold_meeting(section):
-    utils.maximize_windows_with_title_substring('Zoom')
+    utils.maximize_windows_with_title_and_executable('Zoom', "Zoom.exe")
     pass
 
 def join_meeting(room_id, password, name):
