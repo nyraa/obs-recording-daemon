@@ -13,6 +13,9 @@ def hold_meeting(section):
     pass
 
 def join_meeting(room_id, password, name):
+    # remove space in room_id
+    room_id = room_id.replace(' ', '')
+
     os.system('taskkill /F /IM zoom.exe')
     utils.launch_cmd(rf'%appdata%\Zoom\bin\Zoom.exe "--url=zoommtg://zoom.us/join?action=join&confno={room_id}&pwd={password}&uname={urllib.parse.quote_plus(name)}"')
 
