@@ -1,6 +1,7 @@
 import configparser
 import datetime
 import logging
+import isodate
 
 import actions
 
@@ -38,7 +39,7 @@ for entry in schedule_config:
         start_date = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
         end = section['end']
         end_date = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
-        keep = schedule_config.getboolean(entry, 'keep')
+        keep = schedule_config.get(entry, 'keep')
 
         # check start < end
         if start_date > end_date:
@@ -53,6 +54,16 @@ for entry in schedule_config:
             actions.stop_recording(section)
             config.set('DEFAULT', 'running', '')
             config.set('DEFAULT', 'state', 'idle')
+
+            # if keep type is repeat, add time to start and end time
+            if keep == 'repeat':
+                repeat_duration = schedule_config.get(entry, 'repeat_duration') # fallback is delta 0 present in PT
+                repeat_delta = isodate.parse_duration(repeat_duration)
+                logger.info(f'Section [{entry}] repeatting add {repeat_delta}')
+                new_start_date = start_date + repeat_delta
+                new_end_date = end_date + repeat_delta
+                schedule_config.set(entry, 'start', new_start_date.strftime('%Y-%m-%d %H:%M:%S'))
+                schedule_config.set(entry, 'end', new_end_date.strftime('%Y-%m-%d %H:%M:%S'))
         
         # if start date is in the past, and end date is in the future(now in the section)
         elif start_date < datetime.datetime.now() and end_date > datetime.datetime.now():
@@ -73,7 +84,7 @@ for entry in schedule_config:
                 actions.maintain(section)
         else:
             logger.info(f'No action to [{entry}]')
-        if remove_expired and end_date < datetime.datetime.now() and not keep:
+        if remove_expired and end_date < datetime.datetime.now() and keep == 'false':
             logger.info(f'Entry [{entry}] expired')
             entry_to_remove.append(entry)
     except KeyError as e:
