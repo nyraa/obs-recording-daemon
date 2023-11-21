@@ -36,7 +36,11 @@ def init_obs():
         except:
             logger.warning('OBS maybe not running, try to launch OBS')
             # utils.launch_cmd(r'"C:\Program Files\obs-studio\bin\64bit\obs64.exe\"')
-            utils.call_from_search('obs')
+            try:
+                utils.call_from_search('obs')
+            except Exception as e:
+                logger.error('Failed to launch obs from search')
+                logger.error(e)
             time.sleep(10)
             try:
                 init()
