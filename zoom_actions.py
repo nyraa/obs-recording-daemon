@@ -34,6 +34,6 @@ def terminate_meeting():
         quit_btn = quit_dialog.結束會議或離開會議.child_window(title="離開會議", control_type="Button").wrapper_object()
         quit_btn.click_input()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'Error in termination of zoom: {e}')
     finally:
         os.system('TASKKILL /F /IM zoom.exe')
