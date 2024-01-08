@@ -57,7 +57,7 @@ for entry in schedule_config:
 
             # if keep type is repeat, add time to start and end time
             if keep == 'repeat':
-                repeat_duration = schedule_config.get(entry, 'repeat_duration') # fallback is delta 0 present in PT
+                repeat_duration = schedule_config.get(entry, 'repeat') # fallback is delta 0 present in PT
                 repeat_delta = isodate.parse_duration(repeat_duration)
                 logger.info(f'Section [{entry}] repeatting add {repeat_delta}')
                 new_start_date = start_date + repeat_delta
