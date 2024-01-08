@@ -144,7 +144,7 @@ def stop_recording(entry):
     if not obs_fail_flag and len(res.datain) == 0:
         logger.warning('No outputPath in the response, recording maybe failed')
         return False
-    else:
+    elif not obs_fail_flag:
         file_path = res.datain['outputPath']
         filename = os.path.basename(file_path)
         new_filename = entry['filename'].format(filename)
@@ -152,6 +152,8 @@ def stop_recording(entry):
         os.rename(file_path, new_file_path)
         logger.info(f'Save the recording file to path: {file_path}')
         return True
+    else:
+        return False
 
 if __name__ == "__main__":
     init()
