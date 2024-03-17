@@ -10,9 +10,11 @@ import win32process
 
 def launch_cmd(cmd):
     send_keys('{LWIN down}r{LWIN up}')
-    run = Application().connect(title='執行', timeout=5)
+    # run = Application().connect(title='執行', timeout=5)
+    time.sleep(3)
     pyperclip.copy(cmd)
-    run.執行.type_keys('^v{ENTER}')
+    # run.執行.type_keys('^v{ENTER}')
+    send_keys('^v{ENTER}')
 
 def call_from_search(keyword):
     send_keys('{LWIN}')
