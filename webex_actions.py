@@ -14,7 +14,7 @@ import json
 import utils
 
 
-def join_meeting(room_id, name, email):
+def join_meeting(room_id, name, email, password):
     utils.call_from_search('webex')
 
     img_join = cv2.imread('img/webex_join.png')
@@ -23,25 +23,39 @@ def join_meeting(room_id, name, email):
     pyautogui.click(x, y)
     time.sleep(2)
 
-    pyperclip.copy(room_id)
-    time.sleep(0.3)
-    send_keys('^v{TAB}{TAB}')
-
-    pyperclip.copy(name)
-    time.sleep(0.3)
-    send_keys('^v{TAB}{TAB}')
-
-    pyperclip.copy(email)
-    time.sleep(0.3)
-    send_keys('^v{TAB}{TAB}{ENTER}')
-
-    # fullscreen
-    img_fullscreen = cv2.imread('img/webex_fullscreen.png')
-    x, y = pyautogui.locateCenterOnScreen(img_fullscreen, confidence=0.9)
+    img_close_lobby = cv2.imread('img/webex_close_lobby.png')
+    x, y, _, _ = pyautogui.locateOnScreen(img_close_lobby, confidence=0.9)
+    x += 234
+    y += 26
     pyautogui.click(x, y)
     time.sleep(2)
 
-def join_meeting_uia(room_id, name, email):
+    pyperclip.copy(room_id)
+    time.sleep(0.3)
+    send_keys('^v{ENTER}')
+    time.sleep(1)
+
+    if password is not None:
+        pyperclip.copy(password)
+        time.sleep(0.3)
+        send_keys('^v{ENTER}')
+    
+    # wait for prepare window popup
+    time.sleep(5)
+    # close mic warning and prompt
+    send_keys('{ESC}{ESC}')
+    time.sleep(1)
+
+    # press enter to join
+    send_keys('{ENTER}')
+
+    # waiting for joining
+    time.sleep(3)
+    # maximize
+    send_keys('{LWIN down}{UP}{LWIN up}')
+    print('open fin')
+
+def join_meeting_uia(room_id, name, email, password):
     utils.call_from_search('webex')
     webex = Application(backend='uia').connect(title='Webex', timeout=100)
 
@@ -80,6 +94,12 @@ def join_meeting_uia(room_id, name, email):
     else:
         pyperclip.copy(room_id)
         send_keys('^v{ENTER}')
+        if password is not None:
+            print('webex password available')
+            time.sleep(1)
+            pyperclip.copy(password)
+            send_keys('^v{ENTER}')
+        
     
     time.sleep(10)
 

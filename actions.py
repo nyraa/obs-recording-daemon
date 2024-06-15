@@ -63,9 +63,10 @@ def start_recording(entry, config):
             room_id = entry['room']
             name = entry['name']
             email = entry['email']
+            password = entry.get('password', None)
 
-            logger.info(f'Room id: {room_id}, Name: {name}, Email: {email}')
-            webex.join_meeting_uia(room_id, name, email)
+            logger.info(f'Room id: {room_id}, Name: {name}, Email: {email}, Password: {password}')
+            webex.join_meeting(room_id, name, email, password)
         except Exception as e:
             logger.error(e)
             print(e)
@@ -149,7 +150,12 @@ def stop_recording(entry):
         filename = os.path.basename(file_path)
         new_filename = entry['filename'].format(filename)
         new_file_path = os.path.join(os.path.dirname(file_path), new_filename)
-        os.rename(file_path, new_file_path)
+        time.sleep(10)  # wait for obs release the file
+        try:
+            os.rename(file_path, new_file_path)
+        except Exception as e:
+            logger.error(e)
+            logger.error(f'Can not rename the recording file, keep the original name {file_path}')
         logger.info(f'Save the recording file to path: {file_path}')
         return True
     else:
