@@ -8,6 +8,8 @@ import time
 import cv2
 import ctypes
 import os
+import base64
+import json
 
 import utils
 
@@ -123,6 +125,28 @@ def join_meeting_uia(room_id, name, email):
     send_keys('{LWIN down}{UP}{LWIN up}')
     print('open fin')
 
+def join_meeting_url(room_id):
+    # terminate old window
+    # terminate_meeting_taskkill()
+    time.sleep(2)
+
+    jt_json = {
+        "t": 36,
+        "t1": round(time.time() * 1000),
+        "up": 3
+    }
+    jt_str = json.dumps(jt_json)
+    jt_base64 = base64.b64encode(jt_str.encode('UTF-8'))
+    room_id = room_id.replace(' ', '')
+
+    url = f'webex://meet?jt={jt_base64.decode()}=&sip={room_id}@meet359.webex.com&mtid=&vp=&dns=meet359.webex.com&flag=33&siteurl=meet359&rc=4&en=prod&bv=118&bt=12'
+    utils.launch_cmd(f'cmd /C start "" "{url}"')
+
+    time.sleep(5)
+    send_keys('{ESC}{ESC}')
+    time.sleep(1)
+    send_keys('{ENTER}')
+
 def terminate_meeting():
     terminate_meeting_taskkill()
 
@@ -144,7 +168,8 @@ def terminate_meeting_uia():
     # webex_meeting_window.Pane.type_keys('{LWIN down}{DOWN}{LWIN up}')
 
 if __name__ == '__main__':
-    join_meeting_uia('2644 400 7600', 'bar', 'example@example.com')
-    time.sleep(5)
+    # join_meeting_uia('2644 400 7600', 'bar', 'example@example.com')
+    join_meeting_url('2641 033 9603')
+    time.sleep(20)
     print('close')
     # terminate_meeting_uia()
