@@ -12,23 +12,28 @@ import base64
 import json
 
 import utils
+import logging
 
 
+logging.basicConfig(filename='daemon.log', level=logging.INFO, format='%(asctime)s %(levelname)s %(module)s - %(message)s')
 def join_meeting(room_id, name, email, password):
     utils.call_from_search('webex')
 
+    time.sleep(10)
     img_join = cv2.imread('img/webex_join.png')
     x, y = pyautogui.locateCenterOnScreen(img_join, confidence=0.9)
 
     pyautogui.click(x, y)
     time.sleep(2)
-
-    img_close_lobby = cv2.imread('img/webex_close_lobby.png')
-    x, y, _, _ = pyautogui.locateOnScreen(img_close_lobby, confidence=0.9)
-    x += 234
-    y += 26
-    pyautogui.click(x, y)
-    time.sleep(2)
+    try:
+        img_close_lobby = cv2.imread('img/webex_close_lobby.png')
+        x, y, _, _ = pyautogui.locateOnScreen(img_close_lobby, confidence=0.9)
+        x += 234
+        y += 26
+        pyautogui.click(x, y)
+        time.sleep(2)
+    except Exception as e:
+        logging.error(e)
 
     pyperclip.copy(room_id)
     time.sleep(0.3)
