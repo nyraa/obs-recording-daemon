@@ -101,7 +101,7 @@ def join_meeting_uia(room_id, name, email, password):
         send_keys('^v{ENTER}')
         if password is not None:
             print('webex password available')
-            time.sleep(1)
+            time.sleep(5)
             pyperclip.copy(password)
             send_keys('^v{ENTER}')
         
@@ -147,7 +147,7 @@ def join_meeting_uia(room_id, name, email, password):
     """
 
     # maximize
-    send_keys('{LWIN down}{UP}{LWIN up}')
+    send_keys('{ESC}{LWIN down}{UP}{LWIN up}')
     print('open fin')
 
 def join_meeting_url(room_id):
