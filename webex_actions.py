@@ -38,11 +38,10 @@ def join_meeting(room_id, name, email, password):
     pyperclip.copy(room_id)
     time.sleep(0.3)
     send_keys('^v{ENTER}')
-    time.sleep(1)
 
     if password is not None:
         pyperclip.copy(password)
-        time.sleep(0.3)
+        time.sleep(5)
         send_keys('^v{ENTER}')
     
     # wait for prepare window popup
@@ -55,9 +54,9 @@ def join_meeting(room_id, name, email, password):
     send_keys('{ENTER}')
 
     # waiting for joining
-    time.sleep(3)
+    time.sleep(5)
     # maximize
-    send_keys('{LWIN down}{UP}{LWIN up}')
+    send_keys('{ESC}{LWIN down}{UP}{LWIN up}')
     print('open fin')
 
 def join_meeting_uia(room_id, name, email, password):
